@@ -151,12 +151,13 @@ class LotteryGameChoose extends Component {
           if (aline.length < 1) return; //skip empty lines
           var fields = aline.split(/\s{2,}/g).filter((v, i) => i > 0); //[date, n, n, n, ...]
           fields = fields.map((n, i) => Number.parseInt(i === 0 ? +Date.parse(n) : n));
+          lines.push(fields);
           if (!isVerified) {
             submitNewData = fields[0] > 0 && dataLocal[0][0] !== fields[0]; //1st lotto drawing has different dates
             isVerified = true;
           }
-          lines.push(fields);
         });
+        if (!submitNewData) submitNewData = dataLocal && lines.length !== dataLocal.length;
 
         if (submitNewData) {
           console.log(`...Saving NEWER Game Dates`);

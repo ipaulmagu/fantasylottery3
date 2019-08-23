@@ -30,7 +30,8 @@
     "materialize-css": "^1.0.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start2": "react-scripts start",
+    "start": "serve -s build",
     "static": "serve -s build",
     "build": "react-scripts build",
     "test": "react-scripts test",

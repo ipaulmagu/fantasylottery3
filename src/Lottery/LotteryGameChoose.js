@@ -71,20 +71,29 @@ class LotteryGameChoose extends Component {
     let hostData = "https://lottery-us1.firebaseio.com/games-data";
     let need2RefreshData = false;
     let dtNow = +new Date();
+    let log = console.log;
     try {
+      log(`[dbGetData.getDates] Fetching...`);
       let oData = await fetch(`${host}/${oGame.id}.json`);
+      log(`[dbGetData.getDates] Fetching...Ok`);
       if (oData) oData = await oData.json();
       need2RefreshData = !oData || !oData.dtUpdated || (oData.dtUpdated && dtNow - oData.dtUpdated > CONSTs.cHour);
+      log(`[dbGetData.getDates] need2Refresh:'${need2RefreshData}'?`);
       // if (!oData) need2RefreshData = true;
       // else {
       //   need2RefreshData = oData.dtUpdated && (dtNow - oData.dtUpdated > CONSTs.cHour);
       // }
       if (!need2RefreshData) {
+        log(`[dbGetData.getData] NO Refresh; Retrieving Data ....`);
         need2RefreshData = true; //assume a failure; data could not be retrieved and will be restored
         oData = await fetch(`${hostData}/${oGame.id}.json`);
+        log(`[dbGetData.getData] NO Refresh; Retrieving Data ....Ok`);
         if (oData) {
+          log(`[dbGetData.getData] NO Refresh; Retrieving Data ....Ok => .json() ...`);
           oData = await oData.json();
-          if (oData)
+          log(`[dbGetData.getData] NO Refresh; Retrieving Data ....Ok => .json()... Ok`);
+          if (oData) {
+            log(`[dbGetData.getData] NO Refresh; Retrieving Data ....Ok => .json()... Ok => returning ...`);
             return {
               status: 0,
               body: "[dbGetData]",
@@ -92,10 +101,11 @@ class LotteryGameChoose extends Component {
               params: { gameid: oGame.id },
               data: Array.isArray(oData) ? oData : oData.split("\n").map(aline => aline.split(","))
             };
+          }
         }
       }
     } catch (err) {
-      console.error(`[dbGetData.getDates]:'${err.toString()}'`);
+      log(`[dbGetData.getDates]:'${err.toString()}'`);
       need2RefreshData = true;
       // return {
       //   status: 0,
@@ -107,6 +117,7 @@ class LotteryGameChoose extends Component {
     }
 
     if (need2RefreshData) {
+      log(`[dbGetData.getData] Refreshing ...`);
       let sURL = oGame.url;
       try {
         console.log(`... Fetching lottery numbers`);
@@ -118,12 +129,16 @@ class LotteryGameChoose extends Component {
         let iStartPos = -1,
           iCntFields = -1;
         let submitNewData = false;
-        let dataLocal = oGame.getLocalData(oGame.id);
-        let localDataExists = dataLocal && dataLocal[0] && dataLocal[0][0],
-          isVerified = !localDataExists; //verified if local data does NOT exist; submitdata =false;
-
+        let dataLocal = oGame.data; // oGame.getLocalData(oGame.id);
+        let localDataExists = dataLocal && dataLocal[0] && dataLocal[0][0];
+        if (!localDataExists) {
+          dataLocal = oGame.getLocalData(oGame.id);
+          localDataExists = dataLocal && dataLocal[0] && dataLocal[0][0];
+        }
+        let isVerified = !localDataExists; //verified if local data does NOT exist; submitdata =false;
         let lines = [];
         txt.split("\n").forEach((aline, idx) => {
+          if (!submitNewData) return; //stop; data will be discarded anyway;
           if (iStartPos < 0) {
             let i = aline.indexOf("-------- ");
             if (i >= 0) {
@@ -137,7 +152,7 @@ class LotteryGameChoose extends Component {
           var fields = aline.split(/\s{2,}/g).filter((v, i) => i > 0); //[date, n, n, n, ...]
           fields = fields.map((n, i) => Number.parseInt(i === 0 ? +Date.parse(n) : n));
           if (!isVerified) {
-            submitNewData = fields[0] > 0 && dataLocal[0][0] - fields[0] !== 0; //1st lotto drawing has different dates
+            submitNewData = fields[0] > 0 && dataLocal[0][0] !== fields[0]; //1st lotto drawing has different dates
             isVerified = true;
           }
           lines.push(fields);

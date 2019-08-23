@@ -11,10 +11,10 @@ import thunk from "redux-thunk";
 const logger = store => {
   return next => {
     return action => {
-      console.log("[Redux Logger].action:" + action);
+      console.log("[Redux Logger].action:", action);
       const res = next(action);
-      console.log(">   >>[Redux Logger].store:" + store);
-      console.log(">   >>[Redux Logger].state:" + store.getState());
+      // console.log(">   >>[Redux Logger].state:", store.getState());
+      console.log(">   >>[Redux Logger].next().res:", res);
       return res;
     };
   };

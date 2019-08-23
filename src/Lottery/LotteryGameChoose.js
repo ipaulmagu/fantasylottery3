@@ -78,7 +78,7 @@ class LotteryGameChoose extends Component {
       log(`[dbGetData.getDates] Fetching...Ok`);
       if (oData) oData = await oData.json();
       need2RefreshData = !oData || !oData.dtUpdated || (oData.dtUpdated && dtNow - oData.dtUpdated > CONSTs.cHour);
-      log(`[dbGetData.getDates] need2Refresh:'${need2RefreshData}'?`);
+      log(`[dbGetData.getDates] need2Refresh:'${need2RefreshData}'? '${JSON.stringify(oData)}'`);
       // if (!oData) need2RefreshData = true;
       // else {
       //   need2RefreshData = oData.dtUpdated && (dtNow - oData.dtUpdated > CONSTs.cHour);
@@ -128,12 +128,12 @@ class LotteryGameChoose extends Component {
 
         let iStartPos = -1,
           iCntFields = -1;
-        let submitNewData = false;
+        let submitNewData = true;
         let dataLocal = oGame.data; // oGame.getLocalData(oGame.id);
-        let localDataExists = dataLocal && dataLocal[0] && dataLocal[0][0];
+        let localDataExists = !!(dataLocal && dataLocal[0] && dataLocal[0][0]);
         if (!localDataExists) {
           dataLocal = oGame.getLocalData(oGame.id);
-          localDataExists = dataLocal && dataLocal[0] && dataLocal[0][0];
+          localDataExists = !!(dataLocal && dataLocal[0] && dataLocal[0][0]);
         }
         let isVerified = !localDataExists; //verified if local data does NOT exist; submitdata =false;
         let lines = [];
@@ -397,13 +397,14 @@ class LotteryGameChoose extends Component {
                   await this.onGameChanged(this.state.game, this.cbGameChangedSuccess, this.cbGameChangedError);
                 }
               }}
-              style={
-                !this.state.game
+              style={{
+                borderRadius: "1em",
+                ...(!this.state.game
                   ? {}
                   : !localStorage.hasOwnProperty(this.state.game.id)
                   ? { color: "green" }
-                  : { color: "gray" }
-              }
+                  : { color: "gray" })
+              }}
             >
               <span>
                 <i

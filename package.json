@@ -3,8 +3,34 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "axios": "^0.19.0",
+    "firebase": "^6.4.0",
+    "materialize-css": "^1.0.0",
+    "moment": "^2.24.0",
+    "moment-timezone": "^0.5.26",
+    "prop-types": "^15.7.2",
+    "re-base": "^4.0.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-materialize": "^3.3.3",
+    "react-redux": "^7.1.0",
+    "react-scripts": "3.0.1",
+    "redux": "^4.0.4",
+    "redux-thunk": "^2.3.0"
+  },
+  "dependencies2": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.19",
+    "@fortawesome/free-solid-svg-icons": "^5.9.0",
+    "@fortawesome/react-fontawesome": "^0.1.4",
+    "@material-ui/core": "^4.2.0",
+    "@material-ui/icons": "^4.2.1",
+    "axios": "^0.19.0",
+    "material-icons": "^0.3.1",
+    "material-ui": "^0.20.2",
+    "materialize-css": "^1.0.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-materialize": "^3.3.3",
     "react-scripts": "3.0.1"
   },
   "scripts": {
@@ -27,5 +53,15 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
+  "main": "index.js",
+  "devDependencies": {
+    "axios": "^0.19.0",
+    "react-router": "^5.0.1",
+    "react-router-dom": "^5.0.1"
+  },
+  "keywords": [],
+  "author": "Paul Magu <iPaulMagu@gmail.com>",
+  "license": "ISC"
 }

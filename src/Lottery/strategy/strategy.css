@@ -1,0 +1,98 @@
+.StgEmpty {
+}
+.StgOutOdd {
+  background-color: rgba(0, 125, 0, 0.5);
+}
+
+.StgOutEven {
+  background-color: rgba(125, 0, 0, 0.5);
+  /* border-radius: 50%; */
+}
+.StgOutHigh {
+  text-decoration: overline;
+  color: #d33;
+  /* background-color: rgba(125, 0, 0, 0.25); */
+}
+
+.StgOutLow {
+  text-decoration: underline;
+  color: green;
+  /* background-color: rgba(0, 125, 0, 0.25); */
+}
+
+.StgOutCircle::after {
+  content: "";
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  position: absolute;
+  border-radius: 50%;
+  left: 0;
+  border: 2px dotted #f33;
+}
+
+.StgOut2-1 {
+  background-color: #37343b40;
+}
+
+.StgOut2-2 {
+  background-color: rgba(0, 125, 0, 0.25);
+}
+
+.StgOut3-1 {
+  background-color: rgba(125, 0, 0, 0.25);
+}
+.StgOut3-2 {
+  background-color: rgba(0, 125, 0, 0.25);
+}
+.StgOut3-3 {
+  background-color: rgba(0, 0, 125, 0.25);
+}
+
+.StgOut4-1 {
+  background-color: rgba(125, 0, 0, 0.5);
+}
+.StgOut4-2 {
+  background-color: rgba(0, 125, 0, 0.5);
+}
+.StgOut4-3 {
+  background-color: rgba(0, 0, 125, 0.5);
+}
+.StgOut4-4 {
+  background-color: rgba(0, 125, 125, 0.5);
+}
+.StgOut5-1 {
+  background-color: rgba(125, 0, 0, 0.5);
+}
+.StgOut5-2 {
+  background-color: rgba(0, 125, 0, 0.5);
+}
+.StgOut5-3 {
+  background-color: rgba(0, 0, 125, 0.5);
+}
+.StgOut5-4 {
+  background-color: rgba(0, 125, 125, 0.5);
+}
+.StgOut5-5 {
+  background-color: rgba(125, 125, 0, 0.5);
+}
+
+.StgOut6-1 {
+  background-color: rgba(125, 0, 0, 0.5);
+}
+.StgOut6-2 {
+  background-color: rgba(0, 125, 0, 0.5);
+}
+.StgOut6-3 {
+  background-color: rgba(0, 0, 125, 0.5);
+}
+.StgOut6-4 {
+  background-color: rgba(0, 125, 125, 0.5);
+}
+.StgOut6-5 {
+  background-color: rgba(125, 125, 0, 0.5);
+}
+.StgOut6-6 {
+  background-color: rgba(125, 0, 125, 0.5);
+}

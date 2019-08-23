@@ -1,0 +1,298 @@
+*:focus,
+*:active {
+  outline: none;
+}
+
+/* :-ms-input-placeholder,
+::-ms-input-placeholder, */
+::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: #1115 !important;
+  opacity: 1 !important; /* Firefox */
+}
+
+.spin {
+  animation: rot360 20s infinite linear;
+}
+
+@keyframes rot360 {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}
+.rocking {
+  animation: rocking5 5s infinite linear;
+}
+
+@keyframes rocking5 {
+  0% {
+    transform: rotate(0);
+    color: inherit;
+  }
+  25% {
+    transform: rotate(3deg);
+    color: #aaccdd;
+  }
+  75% {
+    transform: rotate(-3deg);
+    color: #aa4455;
+  }
+  100% {
+    transform: rotate(0);
+    color: inherit;
+  }
+}
+.inOut {
+  animation: inOut5 2s linear 2s infinite alternate;
+}
+@keyframes inOut5 {
+  0% {
+    opacity: initial;
+  }
+  100% {
+    opacity: 0.3;
+  }
+}
+input#chkGameChanged {
+  display: none;
+  width: 1em;
+  height: 1em;
+}
+input#chkGameChanged ~ #idGameChanged {
+  color: grey;
+}
+input#chkGameChanged:checked ~ #idGameChanged {
+  color: green;
+}
+input#chkGameChanged ~ label {
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  border: 2px solid black;
+  position: absolute;
+}
+
+input#chkGameChanged ~ label::before {
+  content: "";
+  position: absolute;
+  left: 0;
+}
+input#chkGameChanged ~ label::after {
+  content: "";
+  position: absolute;
+  left: 0.1em;
+  margin-top: 0.05em;
+  /* padding: 0.1em; */
+  width: 0.8em;
+  height: 0.8em;
+  border-radius: 50%;
+  background-color: gray;
+}
+input#chkGameChanged:checked ~ label::after {
+  background-color: green;
+}
+
+#idNavLotto {
+  display: flex;
+  flex: 1 1 auto;
+  justify-content: flex-start;
+  height: auto;
+}
+#idNavLotto > select {
+  display: inline-block;
+  /* background: #f2fff2; */
+  border-radius: 0.7em;
+  margin-right: 0.2em;
+  height: 2em;
+  min-height: 2em;
+  padding: 0 0.4em;
+  width: unset;
+  min-width: 3em;
+  box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.2), inset -1px -3px 4px 2px rgba(0, 0, 0, 0.3);
+}
+#idNavLotto > select > option {
+  border-radius: 0.5em;
+}
+/* .IconSettings {
+  font-size: 0.9em;
+  float: unset;
+  margin-left: 0.5em;
+  height: inherit;
+  line-height: inherit;
+} */
+
+.LogoSmallLotto {
+  width: 3em;
+  height: 2em;
+}
+.LogoLotto {
+  opacity: 0.3;
+  max-width: 20vw;
+}
+.LogoApp {
+  width: 64px;
+  height: auto;
+}
+/* .Invalid {
+  color: #a00;
+} */
+.Valid {
+  color: #0a0;
+}
+input.ValidateMe {
+  box-sizing: border-box;
+  border-radius: 1em !important;
+  /* border: 1px dotted #0005; */
+  box-shadow: 0px 0px 4px 1px #0005 !important;
+  padding-left: 4px !important;
+}
+.StgEditMainLine1 {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 0 2px 0 !important;
+}
+.StgEditorToolBar {
+  display: flex;
+  align-items: flex-end;
+}
+.StgEditorToolBar > * {
+  margin: 0 !important;
+  margin-left: 5px !important;
+  padding: 0 !important;
+  display: flex;
+  font-size: 10px;
+  align-items: flex-end;
+}
+.StgEditorToolBar > *::before {
+  content: " | ";
+}
+#idStrategyName {
+  max-height: 1.5em !important;
+  max-width: 12em;
+  margin: 0 !important;
+}
+#idBtnEditStrategy {
+  /* display: flex;
+  font-size: 10px;
+  align-items: flex-end; */
+}
+#idStrategies {
+  display: inline-block;
+  height: unset;
+  border-radius: 0.5em;
+  /* padding: 0; */
+}
+.Invalid,
+input.ValidateMe:invalid {
+  padding-left: 4px !important;
+  box-sizing: border-box !important;
+  border-radius: 1em !important;
+  color: #f00;
+  /* border: 1px solid red; */
+  background-color: #a222;
+  /* cursor: not-allowed; */
+  transition: background-color 2s;
+}
+.StgEdit-Conditions {
+  padding: 0.5em 1em !important;
+  height: 5em !important;
+  border-radius: 1em !important;
+  box-shadow: 2px 2px 4 1 #0005 !important;
+}
+/* .StgEdit-Conditions:hover {
+  box-shadow: 1px 1px 8 4 #0005 !important;
+} */
+.StgEditorErrorsContainer {
+  display: block;
+  width: 100%;
+  position: relative;
+  padding: 0 0.5em;
+  margin: 0;
+  background: #a222;
+  color: red;
+  border-radius: 0.5em;
+  text-align: left;
+}
+
+.StgEditorError {
+  margin:0;
+}
+
+.modal-header,
+.modal-footer {
+  background-color: #aa37 !important;
+}
+.modal-content {
+  background-color: #aa34;
+}
+.modal-header > .Title {
+  padding-bottom: 0.5em;
+  margin: 0;
+}
+.DrawingContainerTab {
+  display: grid;
+  /* grid-gap: 4px; */
+  grid-template-columns: repeat(auto-fill, minmax(15em, auto));
+  /* grid-template-columns: repeat(auto-fill, minmax(15em, 1fr)); */
+  grid-gap: 0px;
+  /* grid-auto-flow: column; */
+  /* display: flex;
+  flex-wrap: wrap; */
+}
+.DrawingContainer {
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  font-size: 12px;
+  height: 1.5em;
+  text-align: right;
+  display: inline-flex;
+}
+.DrawingDate {
+  padding-left: 0.5em;
+  /* margin-right: 1em; */
+  width: 8em;
+  font-size: 10px;
+  text-align: left;
+}
+.DrawingNumbers {
+  display: flex;
+  text-align: right;
+  margin-right: 1em;
+}
+.DrawingNumber {
+  width: 2em;
+  text-align: center;
+  position: relative;
+  border-radius: 50%;
+}
+.Mega {
+  /* font-weight: 700;
+  color: #d145; */
+  background-color: #d143;
+  /* color: white; */
+  border-radius: 50%;
+}
+li.tab:hover {
+  border: 1px dotted #686;
+  border-bottom: 0.3em solid #686;
+  box-sizing: border-box;
+  position: relative;
+  bottom: 0.3em;
+  transform: scale(1.05);
+  transition: transform 1s;
+}
+.AppTittle {
+  font-family: "Times New Roman", Times, serif;
+  font-size: 2em;
+  font-weight: 700;
+  margin: 0;
+}
+/* li.tab:focus {
+  background-color: brown;
+  border: 2px solid yellow;
+} */
+.dropdown-content li > a > i {
+  margin-right: 2px;
+}

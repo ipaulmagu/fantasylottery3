@@ -112,7 +112,7 @@ function handleNewGameData(data) {
     console.error("No data retrieved for " + this.id);
     return false;
   }
-  console.log("[defGamesClient.js]. Saving game ...'" + this.id);
+  console.log("[defGamesClient]. Saving game ...'" + this.id);
   if (Array.isArray(data.data)) this.data = data.data;
   // data.map(aline => aline.split(",").map(f => +f));
   else this.data = data.data.split("\n").map(aline => aline.split(",").map(f => +f));

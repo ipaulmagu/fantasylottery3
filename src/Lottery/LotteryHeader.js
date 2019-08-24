@@ -36,9 +36,6 @@ class LotteryHeader extends Component {
     this.hValidateStgName = this.hValidateStgName.bind(this);
     this.hNewStrategy_ = this.hNewStrategy_.bind(this);
     this.getTempStrategy_ = this.getTempStrategy_.bind(this);
-    // this.h = this.handleClick.bind(this);
-    // this.handleClick = this.handleClick.bind(this);
-    // this.handleClick = this.handleClick.bind(this);
     this.cbGameChanged = this.cbGameChanged.bind(this);
     this.dlgStrategyEditor = null;
     this.refDlg = React.createRef();
@@ -89,14 +86,8 @@ class LotteryHeader extends Component {
     Array.prototype.forEach.call(elems, elem => (elem.placeholder = elem.placeholder.replace(/\\n/g, "\n")));
   }
 
-  handleClick(event) {
-    // console.log("[LotteryHeader.BreadcrumbhandleClick()]");
-    event.preventDefault();
-    // console.log("Click.breadcrumb.");
-  }
-
   getGameNameStateContry(sGameName) {
-    if (!sGameName) sGameName = "ga??-state?-country?";
+    if (!sGameName) sGameName = "ga?-state?-country?";
     // console.log(typeof g, g, "- / \\>;+".split(""));
     let sep = "-/\\>;+ ".split("").filter(v => sGameName.indexOf(v) >= 0);
     if (sep) sep = sep[0] || "-";
@@ -419,12 +410,6 @@ class LotteryHeader extends Component {
                 }}
               >
                 {/* <img className="LogoSmallLotto" src={this.state.img} alt="LogoSmallLotto" /> */}
-                <a href="#!" className="breadcrumb" onClick={this.handleClick}>
-                  {gcountry}
-                </a>
-                <a href="#!" className="breadcrumb" onClick={this.handleClick}>
-                  {gstate}
-                </a>
                 <a
                   className="breadcrumb waves-effect waves-light modal-trigger"
                   href={"#" + this.dlgGmChooserID}
@@ -439,7 +424,7 @@ class LotteryHeader extends Component {
                   style={{ display: "inline", verticalAlign: "inherit" }}
                 >
                   <span>
-                    {gname}
+                    {gcountry} > {gstate} > {gname}
                     <i className="material-icons spin" style={styles.iconsettings}>
                       settings
                     </i>

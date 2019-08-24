@@ -96,7 +96,6 @@ class LotteryGameChoose extends Component {
           oData = await oData.json();
           // log(`[dbGetData.getData] NO Refresh; Retrieving Data ....Ok => .json()... Ok`);
           if (oData) {
-            log(`[dbGetData.getData] NO Refresh; Retrieving Data ....Ok => .json()... Ok => returning ...`);
             let res = {
               status: 0,
               body: "[dbGetData]",
@@ -105,6 +104,7 @@ class LotteryGameChoose extends Component {
               data: Array.isArray(oData) ? oData : oData.split("\n").map(aline => aline.split(","))
             };
             need2RefreshData = !res.data || res.data.length < 2;
+            log(`[dbGetData.getData] NO Refresh; Retrieved (${res.data.length} lines)`);
             if (!need2RefreshData) return res;
           }
         }

@@ -4,8 +4,8 @@ import DefGames from "../defGamesClient";
 import M from "materialize-css";
 import axios from "axios";
 
-let log = () => {};
-// let log =  console.log;
+// let log = () => {};
+let log = console.log;
 class LotteryGameChoose extends Component {
   constructor(props) {
     super(props);
@@ -96,14 +96,16 @@ class LotteryGameChoose extends Component {
           oData = await oData.json();
           // log(`[dbGetData.getData] NO Refresh; Retrieving Data ....Ok => .json()... Ok`);
           if (oData) {
-            // log(`[dbGetData.getData] NO Refresh; Retrieving Data ....Ok => .json()... Ok => returning ...`);
-            return {
+            log(`[dbGetData.getData] NO Refresh; Retrieving Data ....Ok => .json()... Ok => returning ...`);
+            let res = {
               status: 0,
               body: "[dbGetData]",
               msg: "success",
               params: { gameid: oGame.id },
               data: Array.isArray(oData) ? oData : oData.split("\n").map(aline => aline.split(","))
             };
+            need2RefreshData = !res.data || res.data.length < 2;
+            if (!need2RefreshData) return res;
           }
         }
       }

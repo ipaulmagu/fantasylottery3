@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Spinner from "../UI/Spinner";
 import DefGames from "../defGamesClient";
 import M from "materialize-css";
+import axios from "axios";
 
 class LotteryGameChoose extends Component {
   constructor(props) {
@@ -107,13 +108,6 @@ class LotteryGameChoose extends Component {
     } catch (err) {
       log(`[dbGetData.getDates]:'${err.toString()}'`);
       need2RefreshData = true;
-      // return {
-      //   status: 0,
-      //   body: "[dbGetData.getDates].Error",
-      //   msg: "Failed:" + err.toString(),
-      //   params: { gameid: oGame.id },
-      //   data: null
-      // };
     }
 
     if (need2RefreshData) {
@@ -136,6 +130,7 @@ class LotteryGameChoose extends Component {
           localDataExists = !!(dataLocal && dataLocal[0] && dataLocal[0][0]);
         }
         let isVerified = !localDataExists; //verified if local data does NOT exist; submitdata =false;
+        console.log(`...[submitNewData, localDataExists]=['${submitNewData}', '${localDataExists}']`);
         let lines = [];
         txt.split("\n").forEach((aline, idx) => {
           if (!submitNewData) return; //stop; data will be discarded anyway;
@@ -157,7 +152,9 @@ class LotteryGameChoose extends Component {
             isVerified = true;
           }
         });
+        console.log(`...submitNewData='${submitNewData}'`);
         if (!submitNewData) submitNewData = dataLocal && lines.length !== dataLocal.length;
+        console.log(`...submitNewData='${submitNewData}'`);
 
         if (submitNewData) {
           console.log(`...Saving NEWER Game Dates`);

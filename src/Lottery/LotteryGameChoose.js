@@ -4,6 +4,8 @@ import DefGames from "../defGamesClient";
 import M from "materialize-css";
 import axios from "axios";
 
+let log = () => {};
+// let log =  console.log;
 class LotteryGameChoose extends Component {
   constructor(props) {
     super(props);
@@ -31,14 +33,14 @@ class LotteryGameChoose extends Component {
     this.onChangeGameSelectionCountry = this.onChangeGameSelectionCountry.bind(this);
     this.showGamesForStateNCountry = this.showGamesForStateNCountry.bind(this);
     this.dbGetData = this.dbGetData.bind(this);
-    // console.log("LotteryGameChoose.Constructor(), .state, props", this.state, props);
+    // log("LotteryGameChoose.Constructor(), .state, props", this.state, props);
   }
   componentDidMount() {
-    // console.log("[LotteryGameChoose.componentDidMount()].props.game", this.props.game);
+    // log("[LotteryGameChoose.componentDidMount()].props.game", this.props.game);
   }
 
   cbGameChangedSuccess = oGame => {
-    // console.log("[LotteryGameChoose.cbGameChangedSuccess]");
+    // log("[LotteryGameChoose.cbGameChangedSuccess]");
     // document.getElementById("idBtnUpdateData").classList.add("disabled");
     this.refBtnUpdateData.current.classList.remove("disabled");
     this.refBtnUpdateData.current.classList.add("disabled");
@@ -72,14 +74,14 @@ class LotteryGameChoose extends Component {
     let hostData = "https://lottery-us1.firebaseio.com/games-data";
     let need2RefreshData = false;
     let dtNow = +new Date();
-    let log = console.log;
+
     try {
       log(`[dbGetData.getDates] Fetching...`);
       let oData = await fetch(`${host}/${oGame.id}.json`);
-      log(`[dbGetData.getDates] Fetching...Ok`);
+      // log(`[dbGetData.getDates] Fetching...Ok`);
       if (oData) oData = await oData.json();
       need2RefreshData = !oData || !oData.dtUpdated || (oData.dtUpdated && dtNow - oData.dtUpdated > CONSTs.cHour);
-      log(`[dbGetData.getDates] need2Refresh:'${need2RefreshData}'? '${JSON.stringify(oData)}'`);
+      // log(`[dbGetData.getDates] need2Refresh:'${need2RefreshData}'? '${JSON.stringify(oData)}'`);
       // if (!oData) need2RefreshData = true;
       // else {
       //   need2RefreshData = oData.dtUpdated && (dtNow - oData.dtUpdated > CONSTs.cHour);
@@ -88,13 +90,13 @@ class LotteryGameChoose extends Component {
         log(`[dbGetData.getData] NO Refresh; Retrieving Data ....`);
         need2RefreshData = true; //assume a failure; data could not be retrieved and will be restored
         oData = await fetch(`${hostData}/${oGame.id}.json`);
-        log(`[dbGetData.getData] NO Refresh; Retrieving Data ....Ok`);
+        // log(`[dbGetData.getData] NO Refresh; Retrieving Data ....Ok`);
         if (oData) {
-          log(`[dbGetData.getData] NO Refresh; Retrieving Data ....Ok => .json() ...`);
+          // log(`[dbGetData.getData] NO Refresh; Retrieving Data ....Ok => .json() ...`);
           oData = await oData.json();
-          log(`[dbGetData.getData] NO Refresh; Retrieving Data ....Ok => .json()... Ok`);
+          // log(`[dbGetData.getData] NO Refresh; Retrieving Data ....Ok => .json()... Ok`);
           if (oData) {
-            log(`[dbGetData.getData] NO Refresh; Retrieving Data ....Ok => .json()... Ok => returning ...`);
+            // log(`[dbGetData.getData] NO Refresh; Retrieving Data ....Ok => .json()... Ok => returning ...`);
             return {
               status: 0,
               body: "[dbGetData]",
@@ -114,11 +116,11 @@ class LotteryGameChoose extends Component {
       log(`[dbGetData.getData] Refreshing ...`);
       let sURL = oGame.url;
       try {
-        console.log(`... Fetching lottery numbers`);
+        log(`... Fetching lottery numbers`);
         let oData = await fetch(sURL);
-        console.log(`... toText()`);
+        // log(`... toText()`);
         if (oData) txt = await oData.text();
-        console.log(`... Parsing lottery numbers`);
+        // log(`... Parsing lottery numbers`);
 
         let iStartPos = -1,
           iCntFields = -1;
@@ -130,7 +132,7 @@ class LotteryGameChoose extends Component {
           localDataExists = !!(dataLocal && dataLocal[0] && dataLocal[0][0]);
         }
         let isVerified = !localDataExists; //verified if local data does NOT exist; submitdata =false;
-        console.log(`...[submitNewData, localDataExists]=['${submitNewData}', '${localDataExists}']`);
+        // log(`...[submitNewData, localDataExists]=['${submitNewData}', '${localDataExists}']`);
         let lines = [];
         txt.split("\n").forEach((aline, idx) => {
           if (!submitNewData) return; //stop; data will be discarded anyway;
@@ -152,12 +154,12 @@ class LotteryGameChoose extends Component {
             isVerified = true;
           }
         });
-        console.log(`...submitNewData='${submitNewData}'`);
+        // log(`...submitNewData='${submitNewData}'`);
         if (!submitNewData) submitNewData = dataLocal && lines.length !== dataLocal.length;
-        console.log(`...submitNewData='${submitNewData}'`);
+        // log(`...submitNewData='${submitNewData}'`);
 
         if (submitNewData) {
-          console.log(`...Saving NEWER Game Dates`);
+          log(`...Uploading NEWER Game DATE`);
           oData = await fetch(`${host}/${oGame.id}.json`, {
             method: "PATCH", // *GET, POST, PUT, DELETE, etc.
             mode: "cors", // no-cors, cors, *same-origin
@@ -173,8 +175,8 @@ class LotteryGameChoose extends Component {
           });
           if (oData && oData.json) oData = await oData.json();
 
-          console.log(`...PUT-Dates DONE!!! Result:${JSON.stringify(oData)}`);
-          console.log(`...Saving NEWER Game Data('${lines.length}' lines)`);
+          // log(`...PUT-Dates DONE!!! Result:${JSON.stringify(oData)}`);
+          log(`...Uploading NEWER Game DATA ('${lines.length}' lines)`);
           // txt = lines.map(aline => aline.join(",")).join("\n");
           oData = await fetch(`${hostData}/${oGame.id}.json`, {
             method: "PUT", // *GET, POST, PUT, DELETE, etc.
@@ -190,12 +192,12 @@ class LotteryGameChoose extends Component {
             body: JSON.stringify(lines) // body data type must match "Content-Type" header
           });
           if (oData && oData.json) oData = await oData.json();
-          console.log(`...Saving Game Data DONE!!!`);
+          log(`...Uploading Game DONE!!!`);
         }
         // File.savecsv(oGame.fname, lines);
         // File.savecsv("./" + path.basename(f2), lines);
         // log(`[GameMgr.downloadLottoData('${gameid}')] exiting ...`);
-        console.log(`...exiting`);
+        log(`...exiting`);
         return { status: 0, body: "[dbGetData]", msg: "success", params: { gameid: oGame.id }, data: lines };
         // if (cb) cb({ status: 0, msg: "success", params: { gameid }, data: lines });
         // log(`Fetched ${sURL}`);
@@ -218,11 +220,11 @@ class LotteryGameChoose extends Component {
     //New GAME Selected
     if (!oGame) return;
     // this.setState({ img: oGame.img });
-    // console.log(`[LotteryGameChoose.gameChanged()] fetching data for ${oGame.id}...`);
+    // log(`[LotteryGameChoose.gameChanged()] fetching data for ${oGame.id}...`);
     let res = await this.dbGetData(oGame);
     if (res && res.data) {
       if (oGame.attachData({ data: res.data })) {
-        // console.log("[LotteryGameChoose.dataAttached()]", oGame);
+        // log("[LotteryGameChoose.dataAttached()]", oGame);
         if (cbDone) cbDone(oGame);
         M.toast({ html: `'<strong>${oGame.id}</strong>' loaded!`, classes: "rounded green lighten-3 black-text" });
       }
@@ -247,22 +249,22 @@ class LotteryGameChoose extends Component {
     //   })
     //   .then(data => {
     //     if (oGame.attachData(data)) {
-    //       // console.log("[LotteryGameChoose.dataAttached()]", oGame);
+    //       // log("[LotteryGameChoose.dataAttached()]", oGame);
     //       if (cbDone) cbDone(oGame);
     //     }
     //   })
     //   .catch(err => {
-    //     console.log("[LotteryGameChoose.fetch] Error:", err);
+    //     log("[LotteryGameChoose.fetch] Error:", err);
     //     if (cbError) cbError(err, oGame);
     //   });
   };
   onChangeGameSelectionGame = async ev => {
     //SELECT changed; new game requested
-    // console.log("idGames.onChange ev:", ev);
+    // log("idGames.onChange ev:", ev);
     let el = ev.currentTarget || ev.target;
     let gid = el.value;
     if (!this.state) {
-      // console.log("[LotteryGameChoose.idGames.onChange] this.state not found! [gameid, this]=",gid,this);
+      // log("[LotteryGameChoose.idGames.onChange] this.state not found! [gameid, this]=",gid,this);
       return;
     }
     let g = this.gamesByGid.get(gid);
@@ -276,34 +278,34 @@ class LotteryGameChoose extends Component {
     } else {
       //reject selection
       // el.selectedIndex = -1;
-      console.log("[LotteryGameChoose.idGames.onChange] Game change REJECTED (game == state.game)");
+      log("[LotteryGameChoose.idGames.onChange] Game change REJECTED (game == state.game)");
     }
   };
 
   onChangeGameSelectionState = ev => {
     ev.preventDefault();
-    //console.log("idState.onChange ev:", ev);
+    //log("idState.onChange ev:", ev);
     this.setState({ gstate: (ev.currentTarget || ev.target).value, gname: null, gimg: null });
     document.getElementById("idGames").selectedIndex = -1;
   };
   onChangeGameSelectionCountry = ev => {
     ev.preventDefault();
-    // console.log("[LotteryGameChoose.js] idCountry.onChange:", this.state);
+    // log("[LotteryGameChoose.js] idCountry.onChange:", this.state);
     document.getElementById("idState").selectedIndex = -1;
     document.getElementById("idGames").selectedIndex = -1;
     return this.setState({ gcountry: ev.target.value, gstate: null, gname: null, gimg: null });
   };
   showGamesForStateNCountry = () => {
     if (!this.state.gstate) {
-      // console.log("Pop Games, State.gstate does not exist! State=", this.state);
+      // log("Pop Games, State.gstate does not exist! State=", this.state);
       return;
     }
     let c_ = this.games.filter(c => c.id && c.id.toLowerCase() === this.state.gcountry.toLowerCase())[0];
     if (c_ && c_.states) {
       let gs_ = c_.states.filter(st => st.id.toLowerCase() === this.state.gstate.toLowerCase())[0];
-      // console.log("pop Games; Game:", gs_);
+      // log("pop Games; Game:", gs_);
       if (!gs_) {
-        // console.log("pop Games; Game not found");
+        // log("pop Games; Game not found");
         return;
       }
       return gs_.games.map(g => (
@@ -312,11 +314,11 @@ class LotteryGameChoose extends Component {
         </option>
       ));
     }
-    // console.log(c_);
+    // log(c_);
   };
 
   render() {
-    // console.log("[LotteryGameChoose.render()].state", this.state);
+    // log("[LotteryGameChoose.render()].state", this.state);
     const styles = {
       title: { background: "rgba(238, 221, 170, 0.875)", marginBottom: "0", paddingBottom: "0.2em" },
       selCont: {
@@ -351,7 +353,7 @@ class LotteryGameChoose extends Component {
               </select>
               <select id="idState" onChange={this.onChangeGameSelectionState} value={this.state.gstate}>
                 {(() => {
-                  // console.log("Pop States: country=", this.state.gcountry, this.state);
+                  // log("Pop States: country=", this.state.gcountry, this.state);
                   let c_ = this.games.filter(c => c.id && c.id === this.state.gcountry)[0];
                   return c_ && c_.states
                     ? c_.states.map(st => (
@@ -389,7 +391,7 @@ class LotteryGameChoose extends Component {
                 (this.state.game ? (!localStorage.hasOwnProperty(this.state.game.id) ? " pulse" : "") : " disabled")
               }
               onClick={async ev => {
-                // console.log("A#idBtnUpdateData.Click");
+                // log("A#idBtnUpdateData.Click");
                 if (this.state.game) {
                   this.setState({ isLoading: true });
                   await this.onGameChanged(this.state.game, this.cbGameChangedSuccess, this.cbGameChangedError);

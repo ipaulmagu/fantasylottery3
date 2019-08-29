@@ -376,20 +376,22 @@ class LotteryGameChoose extends Component {
               >
                 {this.showGamesForStateNCountry()}
               </select>
+            </div>
+          </div>
+          <div className="modal-footer" style={{ background: "#eeddaa9c" }}>
+            <div className="LogoGame-Spinner left">
               {!this.state.isLoading ? (
                 <img className="LogoLotto" src={this.state.gimg} alt="Lotto Loggo" />
               ) : (
                 <Spinner />
               )}
             </div>
-          </div>
-          <div className="modal-footer" style={{ background: "#eeddaa9c" }}>
             <a
               href="#!"
               ref={this.refBtnUpdateData}
               id="idBtnUpdateData"
               className={
-                "btn waves-effect waves-green btn-flat" +
+                "btn waves-effect waves-green btn-flat left" +
                 (this.state.game ? (!localStorage.hasOwnProperty(this.state.game.id) ? " pulse" : "") : " disabled")
               }
               onClick={async ev => {

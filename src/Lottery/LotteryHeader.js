@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import DlgGamechooser from "./LotteryGameChoose";
 import M from "materialize-css";
 import logo from "../logo.svg";
+import urserimg from "../me.JPG";
 import "./lottery.css";
 import { connect } from "react-redux";
 import * as ACTIONS from "../store/actions";
@@ -26,7 +27,8 @@ class LotteryHeader extends Component {
       stgErrors: [],
       hasStgEditorCondErrors: false,
       hasStgEditorStgNameErrors: false,
-      isStgEditing: false
+      isStgEditing: false,
+      user: { img: urserimg, name: "Paul Magu", email: "ipaulmagu@gmail.com" }
     };
     this.onChangeStgName = this.onChangeStgName.bind(this);
     this.hAddStrategy = this.hAddStrategy.bind(this);
@@ -37,6 +39,7 @@ class LotteryHeader extends Component {
     this.hNewStrategy_ = this.hNewStrategy_.bind(this);
     this.getTempStrategy_ = this.getTempStrategy_.bind(this);
     this.cbGameChanged = this.cbGameChanged.bind(this);
+    this.hClickOnMenuBtnSideBar = this.hClickOnMenuBtnSideBar.bind(this);
     this.dlgStrategyEditor = null;
     this.refDlg = React.createRef();
     this.refFABStrategies = React.createRef();
@@ -84,6 +87,10 @@ class LotteryHeader extends Component {
     });
     elems = document.getElementsByTagName("textarea");
     Array.prototype.forEach.call(elems, elem => (elem.placeholder = elem.placeholder.replace(/\\n/g, "\n")));
+    let elSideBar = document.querySelectorAll("#slide-out");
+    // var elems = document.querySelectorAll(".sidenav");
+    let instance = M.Sidenav.init(elSideBar, {});
+    this.oSidebar = M.Sidenav.getInstance(elSideBar[0]);
   }
 
   getGameNameStateContry(sGameName) {
@@ -106,6 +113,11 @@ class LotteryHeader extends Component {
     console.log("[LotteryHeader.cbGameChanged()] oGame", oGame);
     this.setState({ game: oGame, img: oGame.img });
     this.props.onGameNew(oGame);
+  };
+  hClickOnMenuBtnSideBar = el => {
+    if (this.oSidebar) {
+      this.oSidebar.close();
+    }
   };
   hValidateStgName = ev => {
     let el = this.refValidateName.current;
@@ -313,27 +325,21 @@ class LotteryHeader extends Component {
         lineHeight: "inherit"
       },
       gameLogo: {
-        justifyContent: "space-between",
+        // justifyContent: "center",
         alignItems: "center"
         // backgroundSize: "contain",
         // background: `url("${this.state.img}") no-repeat right`
       },
       gameLogoNav: {
         background: `
-        linear-gradient(90deg, rgba(240, 120,120,0.2) 5em, rgba(240, 120, 120,0.8) 15%),
+        linear-gradient(90deg, rgba(240, 120,120,0.2) 5em, rgba(240, 120, 120,0.8) 45%),
           url("${this.state.img}") no-repeat left
             `,
         backgroundSize: "contain"
       }
     };
 
-    let elLogInOut = !this.state.isLoggedIn ? (
-      <span>Login </span>
-    ) : (
-      <span>
-        Logout <i className="material-icons right">account_circle</i>
-      </span>
-    );
+    let elLogInOut = !this.state.isLoggedIn ? <span>Login </span> : <span>Logout</span>;
 
     let [gname, gstate, gcountry] = this.getGameNameStateContry(this.state.game ? this.state.game.id : null);
     let isModStrategy = this.state.stg && this.state.stg.isModifiable;
@@ -376,16 +382,84 @@ class LotteryHeader extends Component {
     else if (this.state.stg) sConditionsText = this.state.stg.conditionsToString();
 
     return (
-      <div className="col s12 m7">
+      <div className="col s12 m8">
         <div className="card">
           <div className="card blue-grey darken-1">
             <div className="card-stacked">
               <div className="card horizontal" style={styles.gameLogo}>
-                <a href="#!" className="brand-logo">
-                  <img className="LogoApp" src={logo} alt="Little Lotty Lizer" />
-                </a>
+                {/* <span className="hide-on-small-and-down">
+                  <a href="#!" className="brand-logo">
+                    <img className="LogoApp" src={logo} alt="Little Lotty Lizer" />
+                  </a>
+                </span> */}
+                <span>
+                  <ul id="slide-out" className="sidenav" onClick={this.hClickOnMenuBtnSideBar}>
+                    <li>
+                      <div className="user-view">
+                        <div className="background">{/* <!-- <img src="../_/img/me.JPG" /> --> */}</div>
+                        <a href="#user">
+                          {this.state.isLoggedIn && this.state.user ? (
+                            <img className="circle" src={this.state.user.img} />
+                          ) : (
+                            <i className="material-icons" style={{ fontSize: "4rem" }}>
+                              account_circle
+                            </i>
+                          )}
+                        </a>
+
+                        <a href="#name">
+                          <span className="grey-text text-darken-4 name">
+                            {this.state.isLoggedIn && this.state.user ? this.state.user.name : "guest"}
+                          </span>
+                        </a>
+                        <a href="#email">
+                          <span className="grey-text text-darken-3 email">
+                            {this.state.isLoggedIn && this.state.user ? this.state.user.email : "unknown@email.com"}
+                          </span>
+                        </a>
+                      </div>
+                    </li>
+                    {/* <li>
+                      <a href="#!">
+                        <i className="material-icons">cloud</i>First Link With Icon
+                      </a>
+                    </li> */}
+                    <li>
+                      <a href="#!">Strategies</a>
+                    </li>
+                    <li>
+                      <a href="#!">Filter</a>
+                    </li>
+                    <li>
+                      <div className="divider" />
+                    </li>
+                    <li>
+                      <a
+                        href="#!"
+                        className="waves-effect waves-light btn"
+                        onClick={ev => {
+                          ev.preventDefault();
+                          this.props.onMaxDrawingsSet(this.state.isLoggedIn ? 10 : 30);
+                          this.setState(prevState => {
+                            return { isLoggedIn: !this.state.isLoggedIn };
+                          });
+                        }}
+                      >
+                        {elLogInOut}
+                      </a>
+                    </li>
+                    {/* <!-- <li><a href="#!">LogIn/Out</a></li>
+          <li><div className="divider"></div></li>
+          <li><a className="subheader">Subheader</a></li>
+          <li><a className="waves-effect" href="#!">Third Link With Waves</a></li> --> */}
+                  </ul>
+                  <a href="#" data-target="slide-out" class="sidenav-trigger">
+                    <i class="material-icons">menu</i>
+                  </a>
+                </span>
                 <p className="AppTittle">Fantasy Lotto</p>
-                <a
+
+                {/* <a
                   href="#!"
                   className="waves-effect waves-light btn"
                   onClick={ev => {
@@ -397,7 +471,7 @@ class LotteryHeader extends Component {
                   }}
                 >
                   {elLogInOut}
-                </a>
+                </a> */}
               </div>
 
               <nav

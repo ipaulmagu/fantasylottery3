@@ -65,8 +65,8 @@
       height: 1.2em !important;
       line-height: unset !important;
       i.material-icons {
-        height: 1em !important;
-        line-height: 1em !important;
+        height: 1.5em !important;
+        line-height: 1.5em !important;
         font-size: 1.2em;
         margin-right: 0 !important;
       }
@@ -287,7 +287,7 @@ input.ValidateMe:invalid {
 .DrawingContainerTab {
   display: grid;
   /* grid-gap: 4px; */
-  grid-template-columns: repeat(auto-fill, minmax(15em, auto));
+  grid-template-columns: repeat(auto-fill, minmax(15.2em, auto));
   /* grid-template-columns: repeat(auto-fill, minmax(15em, 1fr)); */
   grid-gap: 0px;
   /* grid-auto-flow: column; */
@@ -348,7 +348,15 @@ li.tab:hover {
 .dropdown-content li > a > i {
   margin-right: 2px;
 }
-
+.email {
+  padding-bottom: 0 !important;
+}
+.privacyIcon {
+  position: relative;
+  top: 0.25em;
+  margin-left: 0.25em;
+  cursor: pointer;
+}
 @media only screen and (max-width: 992px) {
   .modal {
     width: 90%;

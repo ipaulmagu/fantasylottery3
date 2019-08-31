@@ -13,12 +13,12 @@ export default class Settings {
     localStorage.setItem("Lottery-Last-Game", JSON.stringify(game.id.trim()));
   }
   static getLastUser() {
-    let o = JSON.parse(localStorage.getItem("Lottery-Last-User"));
+    let o = { email: JSON.parse(localStorage.getItem("Lottery-Last-User")) };
     // console.log("[Settings.getLastUser()] ...", o);
     return o;
   }
   static setLastUser(user) {
     // console.log("[Settings.setLastUser()] ... ", user);
-    localStorage.setItem("Lottery-Last-User", JSON.stringify(user));
+    localStorage.setItem("Lottery-Last-User", JSON.stringify(user.email));
   }
 }

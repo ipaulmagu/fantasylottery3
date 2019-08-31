@@ -1,6 +1,8 @@
-import firebase from "firebase";
+// import firebase from "firebase/app";
+// import firebase from "firebase/database";
+import firebase, { firestore } from "firebase";
 import rebase from "re-base";
-var firebaseConfig = {
+const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_KEY,
   authDomain: process.env.REACT_APP_FIREBASE_DOMAIN,
   databaseURL: process.env.REACT_APP_FIREBASE_DATABASE,
@@ -9,6 +11,7 @@ var firebaseConfig = {
   messagingSenderId: process.env.REACT_APP_FIREBASE_SENDER_ID,
   appId: process.env.REACT_APP_FIREBASE_SENDER_APP_ID
 };
+const settings = { timestampsInSnapshots: true };
 // var firebaseConfig = {
 //   apiKey: "AIzaSyCxBrkcbwT62G-FgJDyyiCXkTjDxRIR5JY",
 //   authDomain: "lottery-us1.firebaseapp.com",
@@ -19,6 +22,12 @@ var firebaseConfig = {
 //   appId: "1:369658436381:web:cf190c11a3a11055"
 // };
 // Initialize Firebase
+// firebase.initializeApp(firebaseConfig);
+// export default firebase;
 const app = firebase.initializeApp(firebaseConfig);
-const base = rebase.createClass(app.database());
-export default base;
+firestore.settings(settings);
+const db = rebase.createClass(app.database());
+//const firestore = app.firestore();
+//const storage = app.storage();
+//const auth = app.auth();
+export default db;

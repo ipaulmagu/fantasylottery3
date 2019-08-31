@@ -8,12 +8,17 @@ import { connect } from "react-redux";
 import * as ACTIONS from "../store/actions";
 import Strategy from "./strategy/Strategy";
 import Condition from "./strategy/Condition";
+import { auth, signInWithGoogle, providerGoogle } from "../firebase";
 
 class LotteryHeader extends Component {
   constructor(props) {
     super(props);
     this.dlgGmChooserID = "dlgGmchooser1";
     this.dlgGameChooserInstance = null;
+    this.auth = auth;
+    this.signInWithGoogle = signInWithGoogle;
+    // this.signInWithGoogleRedirect = signInWithGoogleRedirect;
+    this.providerGoogle = providerGoogle;
     // const [isLoggedIn, setIsLoggedIn] = useState(false);
     // console.log("[LotteryHeader.constructor()].props", this.props);
     this.state = {
@@ -28,7 +33,14 @@ class LotteryHeader extends Component {
       hasStgEditorCondErrors: false,
       hasStgEditorStgNameErrors: false,
       isStgEditing: false,
-      user: { img: urserimg, name: "Paul Magu", email: "ipaulmagu@gmail.com" }
+      user: {
+        uid: "fDS23aa@23",
+        photoURL: urserimg,
+        displayName: "Paul Magu",
+        email: "ipaulmagu@gmail.com",
+        emailVerfified: true
+      },
+      isEmailVisible: false
     };
     this.onChangeStgName = this.onChangeStgName.bind(this);
     this.hAddStrategy = this.hAddStrategy.bind(this);
@@ -40,6 +52,8 @@ class LotteryHeader extends Component {
     this.getTempStrategy_ = this.getTempStrategy_.bind(this);
     this.cbGameChanged = this.cbGameChanged.bind(this);
     this.hClickOnMenuBtnSideBar = this.hClickOnMenuBtnSideBar.bind(this);
+    this.hOnChangeEmailVisible = this.hOnChangeEmailVisible.bind(this);
+    this.hSignIn = this.hSignIn.bind(this);
     this.dlgStrategyEditor = null;
     this.refDlg = React.createRef();
     this.refFABStrategies = React.createRef();
@@ -91,6 +105,15 @@ class LotteryHeader extends Component {
     // var elems = document.querySelectorAll(".sidenav");
     let instance = M.Sidenav.init(elSideBar, {});
     this.oSidebar = M.Sidenav.getInstance(elSideBar[0]);
+    this.unsubscribeAuth = auth.onAuthStateChanged(user => {
+      console.log(`Signing IN.... ${!user ? "(No user)" : "Success"}`);
+      // alert("Signing in....");
+      this.props.onMaxDrawingsSet(!user ? 10 : 30);
+      this.setState({ isLoggedIn: !!user, user });
+    });
+  }
+  componentWillUnmount() {
+    if (this.unsubscribeAuth) this.unsubscribeAuth();
   }
 
   getGameNameStateContry(sGameName) {
@@ -114,7 +137,21 @@ class LotteryHeader extends Component {
     this.setState({ game: oGame, img: oGame.img });
     this.props.onGameNew(oGame);
   };
-  hClickOnMenuBtnSideBar = el => {
+  hOnChangeEmailVisible = ev => {
+    ev.preventDefault();
+    if (ev.stopPropagation) ev.stopPropagation();
+    this.setState(ost => {
+      return { isEmailVisible: !ost.isEmailVisible };
+    });
+  };
+
+  hClickOnMenuBtnSideBar = ev => {
+    if (ev.target && ev.target.classList.contains("eventsPrivacyOnEmail")) {
+      this.hOnChangeEmailVisible(ev);
+      return;
+    }
+    ev.preventDefault();
+    if (ev.stopPropagation) ev.stopPropagation();
     if (this.oSidebar) {
       this.oSidebar.close();
     }
@@ -294,6 +331,29 @@ class LotteryHeader extends Component {
       this.setState({ stg: stg });
     }
   };
+  hSignIn = ev => {
+    ev.preventDefault();
+    // alert("SignIn() attemp....");
+    // console.log("signinWithGoogle", this.signInWithGoogle);
+    if (!this.state.isLoggedIn) {
+      try {
+        // let res = this.signInWithGoogleRedirect();
+        let res = this.signInWithGoogle();
+        // console.log("SIGN-IN result", res);
+      } catch (error) {
+        console.log("**** Error Logging IN:", error);
+      }
+      //  auth.signInWithPopup(signInWithGoogle);
+      // auth.signInWithPopup(providerGoogle);
+    } else {
+      try {
+        let res = this.auth.signOut();
+        // console.log("Signout result", res);
+      } catch (error) {
+        console.log("**** Error Logging OUT:", error);
+      }
+    }
+  };
 
   onChangeStgName = ev => {
     //input box event change
@@ -380,7 +440,26 @@ class LotteryHeader extends Component {
     )
       sConditionsText = this.refValidateConditions.current.value;
     else if (this.state.stg) sConditionsText = this.state.stg.conditionsToString();
-
+    let sUserEmail = this.state.isLoggedIn && this.state.user ? this.state.user.email : "unknown@email.com";
+    if (!this.state.isEmailVisible) {
+      let atSignFound = false,
+        isExt = false,
+        i2 = -1;
+      sUserEmail = sUserEmail
+        .split("")
+        .map((c, i) => {
+          if (!isExt && i >= 2) {
+            if (!atSignFound && c === "@") atSignFound = true;
+            else {
+              // if (atSignFound)
+              if (c === ".") isExt = true;
+              else c = ".";
+            }
+          }
+          return c;
+        })
+        .join(""); //".".repeat(sUserEmail.length);
+    }
     return (
       <div className="col s12 m8">
         <div className="card">
@@ -399,7 +478,7 @@ class LotteryHeader extends Component {
                         <div className="background">{/* <!-- <img src="../_/img/me.JPG" /> --> */}</div>
                         <a href="#user">
                           {this.state.isLoggedIn && this.state.user ? (
-                            <img className="circle" src={this.state.user.img} />
+                            <img className="circle" src={this.state.user.photoURL} />
                           ) : (
                             <i className="material-icons" style={{ fontSize: "4rem" }}>
                               account_circle
@@ -409,14 +488,30 @@ class LotteryHeader extends Component {
 
                         <a href="#name">
                           <span className="grey-text text-darken-4 name">
-                            {this.state.isLoggedIn && this.state.user ? this.state.user.name : "guest"}
+                            {this.state.isLoggedIn && this.state.user ? this.state.user.displayName : "guest"}
                           </span>
                         </a>
-                        <a href="#email">
-                          <span className="grey-text text-darken-3 email">
-                            {this.state.isLoggedIn && this.state.user ? this.state.user.email : "unknown@email.com"}
-                          </span>
-                        </a>
+                        <span
+                          className="grey-text text-darken-3 email eventsPrivacyOnEmail"
+                          style={{ cursor: "pointer" }}
+                          // onChange={this.hOnChangeEmailVisible}
+                        >
+                          {sUserEmail}
+                          <label htmlFor="idShowEmail">
+                            <input
+                              id="idShowEmail"
+                              className="eventsPrivacyOnEmail"
+                              type="checkbox"
+                              style={{ display: "none" }}
+                            />
+                            <i
+                              className="material-icons tiny privacyIcon eventsPrivacyOnEmail"
+                              style={{ color: this.state.isEmailVisible ? "#0a2" : "grey" }}
+                            >
+                              remove_red_eye
+                            </i>
+                          </label>
+                        </span>
                       </div>
                     </li>
                     {/* <li>
@@ -434,17 +529,7 @@ class LotteryHeader extends Component {
                       <div className="divider" />
                     </li>
                     <li>
-                      <a
-                        href="#!"
-                        className="waves-effect waves-light btn"
-                        onClick={ev => {
-                          ev.preventDefault();
-                          this.props.onMaxDrawingsSet(this.state.isLoggedIn ? 10 : 30);
-                          this.setState(prevState => {
-                            return { isLoggedIn: !this.state.isLoggedIn };
-                          });
-                        }}
-                      >
+                      <a href="#!" className="waves-effect waves-light btn" onClick={this.hSignIn}>
                         {elLogInOut}
                       </a>
                     </li>
@@ -453,8 +538,8 @@ class LotteryHeader extends Component {
           <li><a className="subheader">Subheader</a></li>
           <li><a className="waves-effect" href="#!">Third Link With Waves</a></li> --> */}
                   </ul>
-                  <a href="#" data-target="slide-out" class="sidenav-trigger">
-                    <i class="material-icons">menu</i>
+                  <a href="#" data-target="slide-out" className="sidenav-trigger">
+                    <i className="material-icons">menu</i>
                   </a>
                 </span>
                 <p className="AppTittle">Fantasy Lotto</p>

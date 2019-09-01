@@ -1,31 +1,36 @@
 import React, { Component } from "react";
 import DlgGamechooser from "./LotteryGameChoose";
 import M from "materialize-css";
-import logo from "../logo.svg";
-import urserimg from "../me.JPG";
+// import logo from "../logo.svg";
+// import urserimg from "../me.JPG";
 import "./lottery.css";
 import { connect } from "react-redux";
 import * as ACTIONS from "../store/actions";
 import Strategy from "./strategy/Strategy";
 import Condition from "./strategy/Condition";
-import { auth, signInWithGoogle, providerGoogle } from "../firebase";
+import DlgAuth from "./DlgAuth";
+import { auth } from "../firebase";
 
 class LotteryHeader extends Component {
   constructor(props) {
     super(props);
     this.dlgGmChooserID = "dlgGmchooser1";
+    this.dlgAuthID = "dlgAuthenticatorID1";
     this.dlgGameChooserInstance = null;
     this.auth = auth;
-    this.signInWithGoogle = signInWithGoogle;
+    // this.signInWithGoogle = signInWithGoogle;
+    // this.signInWithFB = signInWithFB;
+    // this.signInWithFBRedirect = signInWithFBRedirect;
     // this.signInWithGoogleRedirect = signInWithGoogleRedirect;
-    this.providerGoogle = providerGoogle;
+    // this.providerGoogle = providerGoogle;
     // const [isLoggedIn, setIsLoggedIn] = useState(false);
     // console.log("[LotteryHeader.constructor()].props", this.props);
     this.state = {
       // ...props
+      user: this.props.user,
       game: this.props.game,
       img: this.props.game ? this.props.game.img : null,
-      isLoggedIn: false,
+      // isLoggedIn: false,
       stgs: Strategy.getUserStrategies(),
       allstrategies: Strategy.strategiesDefined,
       stg: null,
@@ -33,13 +38,7 @@ class LotteryHeader extends Component {
       hasStgEditorCondErrors: false,
       hasStgEditorStgNameErrors: false,
       isStgEditing: false,
-      user: {
-        uid: "fDS23aa@23",
-        photoURL: urserimg,
-        displayName: "Paul Magu",
-        email: "ipaulmagu@gmail.com",
-        emailVerfified: true
-      },
+      //user:{uid: "fDS23aa@23",photoURL: urserimg,displayName: "Paul Magu",email: "ipaulmagu@gmail.com",emailVerfified: true},
       isEmailVisible: false
     };
     this.onChangeStgName = this.onChangeStgName.bind(this);
@@ -56,6 +55,7 @@ class LotteryHeader extends Component {
     this.hSignIn = this.hSignIn.bind(this);
     this.dlgStrategyEditor = null;
     this.refDlg = React.createRef();
+    // this.refDlgAuth = React.createRef();
     this.refFABStrategies = React.createRef();
     this.refDropDownMenuTrigger = React.createRef();
     this.refDropDownMenu = React.createRef();
@@ -89,15 +89,8 @@ class LotteryHeader extends Component {
       opacity: 0.8,
       inDuration: 500,
       dismissible: true,
-      onCloseStart: elDlg => {
-        // console.log("[StrategyEditor.onCloseStart].elDlg", elDlg);
-      },
-      onOpenEnd: elDlg => {
-        // console.log("[LotteryHeader.StrategyEditor.onOpenEnd].elDlg", elDlg);
-        // if (!this.state.stg) this.hNewStrategy();
-        // if (this.state.isStgEditing) {
-        // }
-      }
+      onCloseStart: elDlg => {},
+      onOpenEnd: elDlg => {}
     });
     elems = document.getElementsByTagName("textarea");
     Array.prototype.forEach.call(elems, elem => (elem.placeholder = elem.placeholder.replace(/\\n/g, "\n")));
@@ -105,15 +98,20 @@ class LotteryHeader extends Component {
     // var elems = document.querySelectorAll(".sidenav");
     let instance = M.Sidenav.init(elSideBar, {});
     this.oSidebar = M.Sidenav.getInstance(elSideBar[0]);
-    this.unsubscribeAuth = auth.onAuthStateChanged(user => {
-      console.log(`Signing IN.... ${!user ? "(No user)" : "Success"}`);
-      // alert("Signing in....");
-      this.props.onMaxDrawingsSet(!user ? 10 : 30);
-      this.setState({ isLoggedIn: !!user, user });
+
+    //========== Auth Dialog ===============
+    let elDlgAuth = document.getElementById(this.dlgAuthID);
+    this.oDlgAuth = M.Modal.init(elDlgAuth, {
+      opacity: 0.8,
+      inDuration: 500,
+      dismissible: true,
+      onCloseStart: elDlg => {},
+      onOpenEnd: elDlg => {}
     });
+    // this.oDlgAuth = M.Modal.getInstance(elDlgAuth);
   }
   componentWillUnmount() {
-    if (this.unsubscribeAuth) this.unsubscribeAuth();
+    // if (this.unsubscribeAuth) this.unsubscribeAuth();
   }
 
   getGameNameStateContry(sGameName) {
@@ -335,10 +333,12 @@ class LotteryHeader extends Component {
     ev.preventDefault();
     // alert("SignIn() attemp....");
     // console.log("signinWithGoogle", this.signInWithGoogle);
-    if (!this.state.isLoggedIn) {
+    if (!this.props.user) {
       try {
         // let res = this.signInWithGoogleRedirect();
-        let res = this.signInWithGoogle();
+        // let res = this.signInWithGoogle();
+        this.dlgAuth.open();
+        // let res = this.signInWithFBRedirect();
         // console.log("SIGN-IN result", res);
       } catch (error) {
         console.log("**** Error Logging IN:", error);
@@ -398,8 +398,17 @@ class LotteryHeader extends Component {
         backgroundSize: "contain"
       }
     };
-
-    let elLogInOut = !this.state.isLoggedIn ? <span>Login </span> : <span>Logout</span>;
+    let user = this.props.user;
+    let elLogInOut = !user ? <span>Login </span> : <span>Logout</span>;
+    let elSignInOut = user ? (
+      <a href="#!" className="waves-effect waves-light btn" onClick={this.hSignIn}>
+        {elLogInOut}
+      </a>
+    ) : (
+      <a className="waves-effect waves-light btn modal-trigger" href={`#${this.dlgAuthID}`}>
+        Auth {elLogInOut}
+      </a>
+    );
 
     let [gname, gstate, gcountry] = this.getGameNameStateContry(this.state.game ? this.state.game.id : null);
     let isModStrategy = this.state.stg && this.state.stg.isModifiable;
@@ -440,7 +449,7 @@ class LotteryHeader extends Component {
     )
       sConditionsText = this.refValidateConditions.current.value;
     else if (this.state.stg) sConditionsText = this.state.stg.conditionsToString();
-    let sUserEmail = this.state.isLoggedIn && this.state.user ? this.state.user.email : "unknown@email.com";
+    let sUserEmail = user ? user.email : "unknown@email.com";
     if (!this.state.isEmailVisible) {
       let atSignFound = false,
         isExt = false,
@@ -477,8 +486,8 @@ class LotteryHeader extends Component {
                       <div className="user-view">
                         <div className="background">{/* <!-- <img src="../_/img/me.JPG" /> --> */}</div>
                         <a href="#user">
-                          {this.state.isLoggedIn && this.state.user ? (
-                            <img className="circle" src={this.state.user.photoURL} />
+                          {user ? (
+                            <img className="circle" src={user.photoURL} />
                           ) : (
                             <i className="material-icons" style={{ fontSize: "4rem" }}>
                               account_circle
@@ -487,9 +496,7 @@ class LotteryHeader extends Component {
                         </a>
 
                         <a href="#name">
-                          <span className="grey-text text-darken-4 name">
-                            {this.state.isLoggedIn && this.state.user ? this.state.user.displayName : "guest"}
-                          </span>
+                          <span className="grey-text text-darken-4 name">{user ? user.displayName : "guest"}</span>
                         </a>
                         <span
                           className="grey-text text-darken-3 email eventsPrivacyOnEmail"
@@ -529,9 +536,11 @@ class LotteryHeader extends Component {
                       <div className="divider" />
                     </li>
                     <li>
-                      <a href="#!" className="waves-effect waves-light btn" onClick={this.hSignIn}>
+                      {/* <a href="#!" className="waves-effect waves-light btn" onClick={this.hSignIn}>
                         {elLogInOut}
                       </a>
+                      <a className="waves-effect waves-light btn modal-trigger" href={`#${this.dlgAuthID}`}> Auth {elLogInOut} </a> */}
+                      {elSignInOut}
                     </li>
                     {/* <!-- <li><a href="#!">LogIn/Out</a></li>
           <li><div className="divider"></div></li>
@@ -543,20 +552,6 @@ class LotteryHeader extends Component {
                   </a>
                 </span>
                 <p className="AppTittle">Fantasy Lotto</p>
-
-                {/* <a
-                  href="#!"
-                  className="waves-effect waves-light btn"
-                  onClick={ev => {
-                    ev.preventDefault();
-                    this.props.onMaxDrawingsSet(this.state.isLoggedIn ? 10 : 30);
-                    this.setState(prevState => {
-                      return { isLoggedIn: !this.state.isLoggedIn };
-                    });
-                  }}
-                >
-                  {elLogInOut}
-                </a> */}
               </div>
 
               <nav
@@ -760,8 +755,9 @@ class LotteryHeader extends Component {
                 dlgName={this.dlgGmChooserID}
                 game={this.props.game}
                 cbGameChanged={this.cbGameChanged}
-                ref={this.refDlg}
+                // ref={this.refDlg}
               />
+              <DlgAuth dlgID={this.dlgAuthID} />
             </div>
           </div>
         </div>
@@ -773,13 +769,14 @@ class LotteryHeader extends Component {
 const mapState2Props = state => {
   // console.log("[LotteryHeader.mapState2Props].state", state);
   // return { game: state.gm.game, maxDrawings: state.gm.maxDrawings, strategies: state.gm.strategies };
-  return { game: state.game, maxDrawings: state.maxDrawings, strategies: state.strategies };
+  return { game: state.game, user: state.user, maxDrawings: state.maxDrawings, strategies: state.strategies };
 };
 const mapDispatch2Props = dispatch => {
   // console.log("[LotteryHeader.mapDispatch2Props].dispatch");
   return {
     onGameNew: game => dispatch(ACTIONS.onGameNew(game)),
     onMaxDrawingsSet: v => dispatch(ACTIONS.onMaxDrawingsSet(v)),
+    onUserNew: v => dispatch(ACTIONS.onUserNew(v)),
     onStrategyAdd: v => dispatch(ACTIONS.onStrategyAdd(v)),
     onStrategyDel: v => dispatch(ACTIONS.onStrategyDel(v))
   };

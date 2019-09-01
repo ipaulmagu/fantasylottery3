@@ -24,10 +24,23 @@ if (!firestore) log("NO firestore:", firestore);
 const auth = firebase.auth();
 if (!auth) log("NO auth:", auth);
 const providerGoogle = new firebase.auth.GoogleAuthProvider();
+const providerFB = new firebase.auth.FacebookAuthProvider();
 // log("providerGoogle", providerGoogle);
 const signInWithGoogle = () => auth.signInWithPopup(providerGoogle);
 const signInWithGoogleRedirect = () => auth.signInWithRedirect(providerGoogle);
+const signInWithFB = () => auth.signInWithPopup(providerFB);
+const signInWithFBRedirect = () => auth.signInWithRedirect(providerFB);
 // log("signInWithGoogle:", signInWithGoogle);
 //onclick=auth.signInWithPopup(signInWithGoogle);
 // export { firebase, firestore, auth, providerGoogle, signInWithGoogle };
-export { firebase, firestore, auth, providerGoogle, signInWithGoogle, signInWithGoogleRedirect };
+export {
+  firebase,
+  firestore,
+  auth,
+  providerGoogle,
+  providerFB,
+  signInWithGoogle,
+  signInWithGoogleRedirect,
+  signInWithFB,
+  signInWithFBRedirect
+};

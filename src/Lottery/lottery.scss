@@ -188,6 +188,11 @@ input#chkGameChanged:checked ~ label::after {
   width: 64px;
   height: auto;
 }
+.LogoSocial {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-right: 1em;
+}
 /* .Invalid {
   color: #a00;
 } */
@@ -364,4 +369,7 @@ li.tab:hover {
   .modal-footer .btn {
     padding: 0 4px !important;
   }
+}
+.AuthDlg {
+  padding: 0.5em;
 }

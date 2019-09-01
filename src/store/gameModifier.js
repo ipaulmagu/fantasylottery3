@@ -12,7 +12,9 @@ if (!gameSaved && game) {
 const initState = {
   game,
   onNewGame: g => {},
+  onNewUser: u => {},
   maxDrawings: 10,
+  user: null,
   strategies: []
 };
 
@@ -22,9 +24,13 @@ const gameModifier = (state = initState, action) => {
   // console.log("[gameModifier] .state:", state, "*** action:", action);
   switch (action.type) {
     case ACTIONS.GAME_NEW:
-      console.log("[gameModifier.GAME_NEW].action.game:", action.game);
+      console.log("[gameModifier.GAME_NEW].action:", action.game);
       if (action.game) Settings.setLastGame(action.game);
       return { ...state, game: action.game };
+    case ACTIONS.USER_NEW:
+      console.log("[gameModifier.USER_NEW].action:", action.user);
+      if (action.user) Settings.setLastUser(action.user);
+      return { ...state, user: action.user };
 
     case ACTIONS.MAX_DRAWINGS_SET:
       console.log("[gameModifier.MAX_DRAWINGS_SET].action:", action);

@@ -13,12 +13,24 @@ export default class Settings {
     localStorage.setItem("Lottery-Last-Game", JSON.stringify(game.id.trim()));
   }
   static getLastUser() {
-    let o = { email: JSON.parse(localStorage.getItem("Lottery-Last-User")) };
+    let o = JSON.parse(localStorage.getItem("Lottery-Last-User"));
     // console.log("[Settings.getLastUser()] ...", o);
     return o;
   }
+  /** save to localStorage {uid, displayName, email, photoURL, creationTime,phoneNum, providerId:[facebook.com| google.com]} */
   static setLastUser(user) {
     // console.log("[Settings.setLastUser()] ... ", user);
-    localStorage.setItem("Lottery-Last-User", JSON.stringify(user.email));
+    if (!user) return false;
+    let o = null;
+    if (user.providerData) o = { ...user.providerData[0] };
+    else
+      o = {
+        displayName: user.displayName,
+        email: user.email,
+        photoURL: user.photoURL,
+        emailVerified: user.emailVerified,
+        phoneNumber: user.phoneNumber
+      };
+    localStorage.setItem("Lottery-Last-User", JSON.stringify(o)); //uid, displayName, email, photoURL, creationTime, source(facebook, google)
   }
 }

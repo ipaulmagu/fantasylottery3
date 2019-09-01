@@ -1,8 +1,12 @@
 export const GAME_NEW = "GAME_NEW";
+export const USER_NEW = "USER_NEW";
 export const MAX_DRAWINGS_SET = "MAX_DRAWINGS_SET";
 export const STRATEGY_ADD = "STRATEGY_ADD";
 export const STRATEGY_DEL = "STRATEGY_DEL";
 
+export const onUserNew = user => {
+  return { type: USER_NEW, user };
+};
 export const onGameNew = game => {
   return { type: GAME_NEW, game };
 };
@@ -16,6 +20,11 @@ export const onStrategyDel = v => {
   return { type: STRATEGY_DEL, v };
 };
 
+export const onUserNewAsync = user => {
+  return (dispatch, getState) => {
+    setTimeout(() => dispatch(onUserNew(user)), 2000);
+  };
+};
 export const onGameNewAsync = game => {
   return (dispatch, getState) => {
     // const oldGame = getState().gm.game;

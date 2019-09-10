@@ -30,13 +30,15 @@ export class DlgAuth extends Component {
     this.hSignInError = this.hSignInError.bind(this);
   }
   componentDidMount() {
+    // let elDlgAuth = document.getElementById(this.props.dlgID);
+    // this.oDlgAuth = M.Modal.getInstance(elDlgAuth);
     this.unsubscribeAuth = this.auth.onAuthStateChanged((user, b, c, d) => {
       console.log(`Signing IN.... ${!user ? "(No user)" : "Success"}`);
       // alert("Signing in....");
       let un = !user ? "guest" : user.displayName.split(" ")[0];
       let msg = !user
-        ? `Welcome ${un}!<br> ... login and get more features (for FREE)!`
-        : `Hi ${un}!<Br> ___welcome back!`;
+        ? `Welcome ${un}!<br> ...more features, when you login!`
+        : `Hi ${un}!<Br> &nbsp &nbsp welcome back!`;
       // if (user) {
       M.toast({
         html: msg,
@@ -46,6 +48,8 @@ export class DlgAuth extends Component {
       // }
       this.props.onMaxDrawingsSet(!user ? 10 : 30);
       this.props.onUserNew(user);
+      let dlg = this.props.oDlgAuth;
+      if (dlg && dlg.isOpen) dlg.close();
       // this.setState({ isLoggedIn: !!user, user });
     });
   }
@@ -55,7 +59,12 @@ export class DlgAuth extends Component {
   hSignInError = sProviderID => {
     this.auth.getRedirectResult().then(
       res => {
-        console.log(`Success('${sProviderID}'):`, res, res.user);
+        //   M.toast({
+        //     html: `Success('${sProviderID}') ${res}`,
+        //     classes: "red black-text lighten-3",
+        //     displayLength: 14000
+        //   });
+        console.log(`*** Success('${sProviderID}'):`, res, res.user);
       },
       error => {
         let smsg = `*** Error '${error.code}':'${error.message}'`;
@@ -94,7 +103,7 @@ export class DlgAuth extends Component {
   };
   hLoginSignupGoogle = ev => {
     try {
-      this.signInWithGoogleRedirect();
+      this.signInWithGoogle();
       this.hSignInError("Google");
     } catch (error) {
       console.log("**** [DlgAuth.hLoginSignupGoogle].Error:", error);
@@ -102,14 +111,14 @@ export class DlgAuth extends Component {
   };
   hLoginSignupFB = ev => {
     try {
-      let res = this.signInWithFBRedirect();
+      this.signInWithFB();
       this.hSignInError("FB");
     } catch (error) {
       console.log("**** [DlgAuth.hLoginSignupFB].Error:", error);
     }
   };
   render() {
-    let sOpType = this.state.isSignup ? "Signup" : "Login";
+    // let sOpType = this.state.isSignup ? "Signup" : "Login";
     return (
       <div>
         {/* Modal Trigger */}
@@ -163,7 +172,7 @@ export class DlgAuth extends Component {
           </div>
           <div className="modal-footer">
             <a href="#!" className="modal-close waves-effect waves-green btn-flat">
-              Agree
+              Close
             </a>
           </div>
         </div>

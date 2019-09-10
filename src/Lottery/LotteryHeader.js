@@ -96,7 +96,8 @@ class LotteryHeader extends Component {
     Array.prototype.forEach.call(elems, elem => (elem.placeholder = elem.placeholder.replace(/\\n/g, "\n")));
     let elSideBar = document.querySelectorAll("#slide-out");
     // var elems = document.querySelectorAll(".sidenav");
-    let instance = M.Sidenav.init(elSideBar, {});
+    M.Sidenav.init(elSideBar, {});
+    // let instance = M.Sidenav.init(elSideBar, {});
     this.oSidebar = M.Sidenav.getInstance(elSideBar[0]);
 
     //========== Auth Dialog ===============
@@ -277,11 +278,23 @@ class LotteryHeader extends Component {
       alert(s + " Errors:\n" + errors.join("\n"));
       console.log("[LotteryHeader.AddStrategy()] " + s + " Errors:\n" + errors.join("\n"));
     } else {
+      stg.key = stg.name;
       let isAdded = this.Strategy.addUserStrategy(stg);
       if (!isAdded) {
-        alert(s);
+        M.toast({
+          html: s,
+          classes: "rounded red lighten-4 black-text",
+          displayLength: 5000
+        });
         // console.log("[LotteryHeader.AddStrategy()] " + s);
-      } else this.setState({ stgs: this.Strategy.getUserStrategies(), stg: stg });
+      } else {
+        M.toast({
+          html: `Success!! Added Strategy '${stg.name}'(${stg.key}).`,
+          classes: "rounded green lighten-4 black-text",
+          displayLength: 5000
+        });
+        this.setState({ stgs: this.Strategy.getUserStrategies(), stg: stg });
+      }
       // this.hNewStrategy(null);
     }
   };
@@ -334,10 +347,12 @@ class LotteryHeader extends Component {
     // alert("SignIn() attemp....");
     // console.log("signinWithGoogle", this.signInWithGoogle);
     if (!this.props.user) {
+      // never gets used. Materialize activates itself via #id
       try {
         // let res = this.signInWithGoogleRedirect();
         // let res = this.signInWithGoogle();
-        this.dlgAuth.open();
+        // alert("opening");
+        // this.oDlgAuth.open();
         // let res = this.signInWithFBRedirect();
         // console.log("SIGN-IN result", res);
       } catch (error) {
@@ -347,7 +362,8 @@ class LotteryHeader extends Component {
       // auth.signInWithPopup(providerGoogle);
     } else {
       try {
-        let res = this.auth.signOut();
+        this.auth.signOut();
+        // let res = this.auth.signOut();
         // console.log("Signout result", res);
       } catch (error) {
         console.log("**** Error Logging OUT:", error);
@@ -364,6 +380,7 @@ class LotteryHeader extends Component {
     let oStg = this.getTempStrategy_();
     if (oStg) {
       oStg.key = oStg.name = ev.currentTarget.value;
+      if (!oStg.key || oStg.key.trim().length < 1) oStg.key = oStg.name;
     }
     this.setState({ stg: oStg, hasStgEditorStgNameErrors: hasErrors });
   };
@@ -452,8 +469,7 @@ class LotteryHeader extends Component {
     let sUserEmail = user ? user.email : "unknown@email.com";
     if (!this.state.isEmailVisible) {
       let atSignFound = false,
-        isExt = false,
-        i2 = -1;
+        isExt = false;
       sUserEmail = sUserEmail
         .split("")
         .map((c, i) => {
@@ -487,7 +503,7 @@ class LotteryHeader extends Component {
                         <div className="background">{/* <!-- <img src="../_/img/me.JPG" /> --> */}</div>
                         <a href="#user">
                           {user ? (
-                            <img className="circle" src={user.photoURL} />
+                            <img className="circle" src={user.photoURL} alt="User" />
                           ) : (
                             <i className="material-icons" style={{ fontSize: "4rem" }}>
                               account_circle
@@ -547,7 +563,7 @@ class LotteryHeader extends Component {
           <li><a className="subheader">Subheader</a></li>
           <li><a className="waves-effect" href="#!">Third Link With Waves</a></li> --> */}
                   </ul>
-                  <a href="#" data-target="slide-out" className="sidenav-trigger">
+                  <a href="#!" data-target="slide-out" className="sidenav-trigger">
                     <i className="material-icons">menu</i>
                   </a>
                 </span>
@@ -757,7 +773,7 @@ class LotteryHeader extends Component {
                 cbGameChanged={this.cbGameChanged}
                 // ref={this.refDlg}
               />
-              <DlgAuth dlgID={this.dlgAuthID} />
+              <DlgAuth dlgID={this.dlgAuthID} oDlgAuth={this.oDlgAuth} />
             </div>
           </div>
         </div>

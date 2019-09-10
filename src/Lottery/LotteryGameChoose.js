@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import Spinner from "../UI/Spinner";
 import DefGames from "../defGamesClient";
 import M from "materialize-css";
-import axios from "axios";
+// import axios from "axios";
 
 // let log = () => {};
 let log = console.log;

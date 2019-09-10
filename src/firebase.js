@@ -12,7 +12,8 @@ const firebaseConfig = {
   appId: process.env.REACT_APP_FIREBASE_SENDER_APP_ID
 };
 const log = console.log;
-let resInit = firebase.initializeApp(firebaseConfig);
+// let resInit =
+firebase.initializeApp(firebaseConfig);
 // log("firebase:", firebase, "config:", JSON.stringify(firebaseConfig), "firebase.initialzeApp", resInit);
 const firestore = firebase.firestore();
 // Remove the warning about timstamps change.
